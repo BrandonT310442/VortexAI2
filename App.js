@@ -1,12 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import HomeStack from '../VortexAI/routes/homeStack';
+import { TamaguiProvider, createTamagui } from '@tamagui/core' // or 'tamagui'
+import { config } from '@tamagui/config/v3'
+const tamaguiConfig = createTamagui(config)
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <TamaguiProvider config={tamaguiConfig}>
+          <HomeStack />
+
+  </TamaguiProvider>
   );
 }
 
