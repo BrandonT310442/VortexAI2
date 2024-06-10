@@ -1,9 +1,16 @@
 import React from 'react';
+
 import { View, StyleSheet, Dimensions } from 'react-native';
-import { SizableText } from 'tamagui';
+import { SizableText, Button, Card, H2, Image, Paragraph, XStack, CardProps } from 'tamagui';
 import { LinearGradient } from 'tamagui/linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
+
+  const goToGPT = () => {
+    navigation.navigate('GPT');
+  };
   return (
     <View style={styles.container}>
       {/* <LinearGradient
@@ -22,7 +29,6 @@ const HomeScreen = () => {
         hoverStyle={{
           color: '$colorHover',
         }}
-        // style={styles.text}
       >
         Vortex AI
       </SizableText>
@@ -39,10 +45,36 @@ const HomeScreen = () => {
         }}
         style={styles.text}
       >
-All 4 GPT's in 1 App
+The Most Powerful AI App
       </SizableText>
-
-      
+      <br>
+      </br>
+      <br>
+      </br>
+      <br>
+      </br>
+      <Card
+      style={styles.card}
+      >
+      <Card.Header padded>
+        <H2>ChatGPT</H2>
+        <Paragraph theme="alt2">Powered by GPT 4.0o</Paragraph>
+      </Card.Header>
+      <Card.Footer padded>
+        <XStack flex={1} />
+        <Button onPress={goToGPT} borderRadius="$10">Continue</Button>
+      </Card.Footer>
+      <Card.Background>
+        <Image
+          resizeMode="contain"
+          alignSelf="center"
+          source={{
+            width: 300,
+            height: 300,
+          }}
+        />
+      </Card.Background>
+    </Card>
     </View>
   );
 };
@@ -53,10 +85,19 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Center the text horizontally
     justifyContent: 'center', // Center the text vertically
   },
+  headingOne: {
+    flex: 1, // Take up the full screen
+    alignItems: 'center', // Center the text horizontally
+    justifyContent: 'center', // Center the text vertically
+  }, 
   text: {
     zIndex: 1, // Ensure the text is above the gradient
     marginTop: 50, // Additional margin if needed
   },
+  card: {
+    marginLeft: 0, 
+  }
+
 });
 
 export default HomeScreen;

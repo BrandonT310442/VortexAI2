@@ -9,7 +9,7 @@ const HomeStack = () => (
   <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home}   options={{ headerShown: false }} />
-      <Stack.Screen name="GPT" component={GPT} />
+      <Stack.Screen name="GPT"  component={GPT} />
     </Stack.Navigator>
   </NavigationContainer>
 );
