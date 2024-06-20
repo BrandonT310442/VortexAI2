@@ -1,84 +1,121 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import { Button, Input, TextArea, XStack, YStack } from 'tamagui';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome
 import { GROQ_API_KEY } from '@env';
 import Groq from "groq-sdk";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome' 
-import ChatBubble from '../components/ChatBubble'
+import ChatBubble from 'react-native-chat-bubble';
+import { SizableText } from 'tamagui';
+
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
 const groq = new Groq({ apiKey: GROQ_API_KEY, dangerouslyAllowBrowser: true });
 
-export async function main() {
-  const chatCompletion = await getGroqChatCompletion();
-  console.log(chatCompletion.choices[0]?.message?.content || "");
+export async function main(content) {
+  const chatCompletion = await getGroqChatCompletion(content);
+ return chatCompletion.choices[0]?.message?.content || "";
 }
 
-export async function getGroqChatCompletion() {
+export async function getGroqChatCompletion(content) {
   return groq.chat.completions.create({
     messages: [
       {
         role: "user",
-        content: "Explain the importance of fast language models",
+        content: content,
       },
     ],
     model: "llama3-8b-8192",
   });
 }
-
 const GPT = () => {
-  useEffect(() => {
-    // main()
-  }, []);
+  const [message, setMessage] = useState('');
+  const [components, setComponents] = useState([]);
+
+  const handleMessage = async () => {
+    console.log("Message sent: ", message);
+    addComponent(true, message);
+
+    const returnMsg = await main(message); 
+    addComponent(false, returnMsg);
+
+    console.log("Response received: ", returnMsg);
+    setMessage('');
+  }
+
+  const addComponent = (isOwnMessage, content) => {
+    setComponents(prevComponents => [
+      ...prevComponents,
+      { isOwnMessage, content }
+    ]);
+  };
 
   return (
     <View style={styles.outerContainer}>
-   
-   <ChatBubble />
-      <View style={styles.container}>
-        <YStack
-          minHeight={250}
-          overflow="hidden"
-          space="$2"
-          margin="$3"
-          padding="$2"
-          flex={1}
-        >
-          {/* Other content can go here */}
-        </YStack>
-        <XStack style={styles.inputWrapper}>
-          <Input style={styles.input} flex={1} size={2} placeholder="Ask me anything..." />
-          <TouchableOpacity style={styles.iconButton} onPress={() => { /* Add your onPress logic here */ }}>
-          <FontAwesomeIcon icon={faPaperPlane} />                   
-           </TouchableOpacity>
-        </XStack>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {components.map((comp, index) => (
+          <ChatBubble
+            key={index}
+            isOwnMessage={comp.isOwnMessage}
+            bubbleColor={comp.isOwnMessage ? '#1084ff' : '#e1e1e1'}
+            tailColor={comp.isOwnMessage ? '#1084ff' : '#e1e1e1'}
+            withTail={true}
+            onPress={() => console.log("Bubble Pressed!")}
+          >
+      <SizableText
+        // can add theme values
+        color={comp.isOwnMessage ? '#FFFFFF' : '#000000'}
+        fontFamily="$body"
+        // or just use direct values
+        fontWeight="350"
+        hoverStyle={{
+          color: '$colorHover',
+        }}
+      >
+        {comp.content}
+      </SizableText>
+          </ChatBubble>
+        ))}
+      </ScrollView>
+      
+      <XStack style={styles.inputWrapper}>
+        <Input
+          style={styles.input}
+          size={2}
+          placeholder="Ask me anything..."
+          value={message}
+          onChangeText={setMessage}
+          onSubmitEditing={handleMessage}
+        />
+        <TouchableOpacity style={styles.iconButton} onPress={handleMessage}>
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </TouchableOpacity>
+      </XStack>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   outerContainer: {
-    flex: 1, // This makes the outer container take up the whole screen
+    flex: 1,
   },
-  textContainer: {
-    padding: 16, // Add some padding around the text
-  },
-  container: {
-    flex: 1, // This makes the container take up the whole screen
-    justifyContent: 'space-between', // This pushes the input to the bottom
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
   },
   inputWrapper: {
-    flexDirection: 'row', // Ensure the input and button are in a row
-    padding: 16, // Add some padding around the input
-    width: '100%', // Ensure it takes up the full width
-    alignItems: 'center', // Center align the items vertically
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    backgroundColor: '#fff',
   },
   input: {
-    flex: 1, // Ensure the input takes up available space
+    flex: 1,
+    marginRight: 10,
   },
   iconButton: {
-    marginLeft: 10, // Add some space between the input and the button
+    marginLeft: 10,
   },
 });
 
