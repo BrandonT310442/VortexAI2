@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { SizableText, Button, Card, H2, H3, Image, Paragraph, XStack } from 'tamagui';
 import { useNavigation } from '@react-navigation/native';
-import Prodia from './Prodia';
+import Dalle from './DALLE';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -13,7 +13,7 @@ const HomeScreen = () => {
 
   
   const goToProdia = () => {
-    navigation.navigate('Prodia');
+    navigation.navigate('Dalle');
   };
 
 
